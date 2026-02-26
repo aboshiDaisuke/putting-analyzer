@@ -1,4 +1,5 @@
 import "dotenv/config";
+import path from "path";
 import express from "express";
 import { createServer } from "http";
 import net from "net";
@@ -70,6 +71,17 @@ async function startServer() {
       createContext,
     }),
   );
+
+  // In production, serve the Expo Web static files
+  if (ENV.isProduction) {
+    const distPath = path.resolve(import.meta.dirname, "../dist");
+    app.use(express.static(distPath));
+
+    // SPA fallback: serve index.html for non-API routes
+    app.get("*", (_req, res) => {
+      res.sendFile(path.join(distPath, "index.html"));
+    });
+  }
 
   const preferredPort = parseInt(process.env.PORT || "3000");
   const port = await findAvailablePort(preferredPort);
