@@ -3,8 +3,8 @@ services:
     name: putting-analyzer
     runtime: node
     plan: free
-    buildCommand: npm install && npm run build
-    startCommand: npm run start
+    buildCommand: corepack enable && corepack prepare pnpm@9.12.0 --activate && pnpm install && pnpm run build
+    startCommand: pnpm run start
     envVars:
       - key: NODE_ENV
         value: production
