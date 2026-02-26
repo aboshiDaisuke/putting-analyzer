@@ -201,7 +201,7 @@ const normalizeToolChoice = (
   return toolChoice;
 };
 
-const useGemini = () => ENV.geminiApiKey.length > 0;
+const useGemini = () => !!ENV.geminiApiKey;
 
 const resolveApiUrl = () => {
   if (useGemini()) {
@@ -209,14 +209,14 @@ const resolveApiUrl = () => {
   }
   return ENV.forgeApiUrl && ENV.forgeApiUrl.trim().length > 0
     ? `${ENV.forgeApiUrl.replace(/\/$/, "")}/v1/chat/completions`
-    : "https://forge.manus.im/v1/chat/completions";
+    : "https://api.openai.com/v1/chat/completions"; // Default to OpenAI if not Gemini
 };
 
-const resolveApiKey = () => ENV.geminiApiKey || ENV.forgeApiKey;
+const resolveApiKey = () => ENV.geminiApiKey || ENV.forgeApiKey; // forgeApiKey is kept as fallback for generic OpenAI compatible endpoint
 
 const assertApiKey = () => {
   if (!resolveApiKey()) {
-    throw new Error("GEMINI_API_KEY or BUILT_IN_FORGE_API_KEY is not configured");
+    throw new Error("GEMINI_API_KEY or BUILT_IN_FORGE_API_KEY (for OpenAI) is not configured");
   }
 };
 
